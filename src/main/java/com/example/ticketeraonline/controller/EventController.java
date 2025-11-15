@@ -81,8 +81,8 @@ public class EventController {
             @Parameter(description = "Nuevos datos del evento")
             @RequestBody EventDTO eventDTO) {
         try {
-            EventDTO event = eventService.updateEvent(id, eventDTO);
-            return ResponseEntity.ok(event);
+            EventDTO updated = eventService.updateEvent(id, eventDTO);
+            return ResponseEntity.ok(updated);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }

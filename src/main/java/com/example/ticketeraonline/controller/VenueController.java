@@ -57,8 +57,12 @@ public class VenueController {
     )
     @GetMapping("/{id}")
     public ResponseEntity<VenueDTO> getVenueById(@PathVariable Long id) {
-        VenueDTO venue = venueService.getById(id);
-        return ResponseEntity.ok(venue);
+        try {
+            VenueDTO venue = venueService.getById(id);
+            return ResponseEntity.ok(venue);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // POST

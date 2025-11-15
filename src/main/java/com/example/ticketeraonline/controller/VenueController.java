@@ -28,13 +28,22 @@ public class VenueController {
     // GET BY ID
     @GetMapping("/{id}")
     public ResponseEntity<VenueDTO> getVenueById(@PathVariable Long id) {
-        VenueDTO venue = venueService.getById(id);
-        return ResponseEntity.ok(venue);
+        try {
+            VenueDTO venue = venueService.getById(id);
+            return ResponseEntity.ok(venue);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // POST
     @PostMapping
     public ResponseEntity<VenueDTO> createVenue(@RequestBody VenueDTO venueDTO) {
+        // Validation required in Task 2
+        if (venueDTO.getName() == null || venueDTO.getName().trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
         try {
             VenueDTO createdVenue = venueService.createVenue(venueDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdVenue);
@@ -45,7 +54,15 @@ public class VenueController {
 
     // PUT
     @PutMapping("/{id}")
-    public ResponseEntity<VenueDTO> updateVenue(@PathVariable Long id, @RequestBody VenueDTO venueDTO) {
+    public ResponseEntity<VenueDTO> updateVenue(
+            @PathVariable Long id,
+            @RequestBody VenueDTO venueDTO
+    ) {
+        // Validation required in Task 2
+        if (venueDTO.getName() == null || venueDTO.getName().trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
         try {
             VenueDTO updatedVenue = venueService.updateVenue(id, venueDTO);
             return ResponseEntity.ok(updatedVenue);
@@ -65,4 +82,3 @@ public class VenueController {
         }
     }
 }
-

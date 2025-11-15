@@ -14,7 +14,7 @@ public class EventService {
     }
 
     public List<EventDTO> getAllEvents() {
-        return EventRepository.findAll();
+        return eventRepository.findAll();
     }
 
     public EventDTO getEventById(Long id) {

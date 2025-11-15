@@ -1,6 +1,5 @@
 package com.example.ticketeraonline.controller;
 
-
 import com.example.ticketeraonline.dto.EventDTO;
 import com.example.ticketeraonline.service.EventService;
 import org.springframework.http.HttpStatus;
@@ -36,6 +35,11 @@ public class EventController {
 
     @PostMapping
     public ResponseEntity<EventDTO> createEvent(@RequestBody EventDTO eventDTO) {
+        // Validation required by Task 2
+        if (eventDTO.getName() == null || eventDTO.getName().trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
         try {
             EventDTO event = eventService.createEvent(eventDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(event);
@@ -44,17 +48,25 @@ public class EventController {
         }
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<EventDTO> updateEvent(@PathVariable Long id, @RequestBody EventDTO eventDTO) {
+    @PutMapping("/{id}")
+    public ResponseEntity<EventDTO> updateEvent(
+            @PathVariable Long id,
+            @RequestBody EventDTO eventDTO
+    ) {
+        // Validation required by Task 2
+        if (eventDTO.getName() == null || eventDTO.getName().trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
         try {
-            EventDTO event = eventService.updateEvent(id, eventDTO);
-            return ResponseEntity.ok(event);
+            EventDTO updated = eventService.updateEvent(id, eventDTO);
+            return ResponseEntity.ok(updated);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         try {
             eventService.deleteEvent(id);
@@ -63,5 +75,4 @@ public class EventController {
             return ResponseEntity.notFound().build();
         }
     }
-
 }

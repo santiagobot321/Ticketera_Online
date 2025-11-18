@@ -18,61 +18,27 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EventDTO>> getAllEvents() {
-        List<EventDTO> events = eventService.getAllEvents();
-        return ResponseEntity.ok(events);
+    public List<EventDTO> getAllEvents() {
+        return eventService.getAllEvents();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventDTO> getEventById(@PathVariable Long id) {
-        try {
-            EventDTO event = eventService.getEventById(id);
-            return ResponseEntity.ok(event);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public EventDTO getEventById(@PathVariable Long id) {
+        return eventService.getEventById(id);
     }
 
     @PostMapping
-    public ResponseEntity<EventDTO> createEvent(@RequestBody EventDTO eventDTO) {
-        // Validation required by Task 2
-        if (eventDTO.getName() == null || eventDTO.getName().trim().isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        try {
-            EventDTO event = eventService.createEvent(eventDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(event);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public EventDTO createEvent(@RequestBody EventDTO eventDTO) {
+            return eventService.createEvent(eventDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EventDTO> updateEvent(
-            @PathVariable Long id,
-            @RequestBody EventDTO eventDTO
-    ) {
-        // Validation required by Task 2
-        if (eventDTO.getName() == null || eventDTO.getName().trim().isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        try {
-            EventDTO updated = eventService.updateEvent(id, eventDTO);
-            return ResponseEntity.ok(updated);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public EventDTO updateEvent(@PathVariable Long id, @RequestBody EventDTO eventDTO) {
+            return eventService.updateEvent(id, eventDTO);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
-        try {
+    public void deleteEvent(@PathVariable Long id) {
             eventService.deleteEvent(id);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
     }
 }

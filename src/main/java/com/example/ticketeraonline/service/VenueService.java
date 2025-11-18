@@ -1,7 +1,7 @@
 package com.example.ticketeraonline.service;
 
-import com.example.ticketeraonline.dto.EventDTO;
 import com.example.ticketeraonline.dto.VenueDTO;
+import com.example.ticketeraonline.entity.VenueEntity;
 import com.example.ticketeraonline.repository.VenueRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,48 +17,59 @@ public class VenueService {
     }
 
     public List<VenueDTO> getAllVenues() {
-        return venueRepository.findAll();
+        return venueRepository.findAll()
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
     public VenueDTO getById(Long id) {
-        VenueDTO venueDTO = venueRepository.findById(id);
-        if (venueDTO == null) {
-            throw new IllegalArgumentException("Venue not found with the ID: " + id);
-        }
-        return venueDTO;
+        VenueEntity venue = venueRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Venue not found with ID: " + id));
+        return toDTO(venue);
     }
 
-    public VenueDTO createVenue(VenueDTO venueDTO) {
-        if (venueDTO.getName() == null || venueDTO.getName().isEmpty()) {
-            throw new IllegalArgumentException("Venue name cannot be empty");
-        }
-        return venueRepository.save(venueDTO);
+    public VenueDTO createVenue(VenueDTO dto) {
+        VenueEntity venue = toEntity(dto);
+        VenueEntity saved = venueRepository.save(venue);
+        return toDTO(saved);
     }
 
-    public VenueDTO updateVenue(Long id, VenueDTO venueDTO) {
-        if (venueDTO.getName() == null || venueDTO.getName().isEmpty()) {
-            throw new IllegalArgumentException("Venue name cannot be empty");
-        }
+    public VenueDTO updateVenue(Long id, VenueDTO dto) {
+        VenueEntity venue = venueRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Venue not found with ID: " + id));
 
-        VenueDTO existingVenue = venueRepository.findById(id);
-        if (existingVenue == null) {
-            throw new IllegalArgumentException("Venue not found with ID: " + id);
-        }
+        venue.setName(dto.getName());
+        venue.setAddress(dto.getAddress());
+        venue.setCapacity(dto.getCapacity());
 
-        // Update fields
-        existingVenue.setName(venueDTO.getName());
-        existingVenue.setAddress(venueDTO.getAddress());
-        existingVenue.setCapacity(venueDTO.getCapacity());
-
-        return existingVenue;
+        VenueEntity saved = venueRepository.save(venue);
+        return toDTO(saved);
     }
-
 
     public void deleteVenue(Long id) {
-        VenueDTO venueDTO = venueRepository.findById(id);
-        if (venueDTO == null) {
+        if (!venueRepository.existsById(id)) {
             throw new IllegalArgumentException("Venue not found with ID: " + id);
         }
-        venueRepository.delete(id);
+        venueRepository.deleteById(id);
+    }
+
+    // Conversion helpers
+    private VenueDTO toDTO(VenueEntity venue) {
+        VenueDTO dto = new VenueDTO();
+        dto.setId(venue.getId());
+        dto.setName(venue.getName());
+        dto.setAddress(venue.getAddress());
+        dto.setCapacity(venue.getCapacity());
+        return dto;
+    }
+
+    private VenueEntity toEntity(VenueDTO dto) {
+        VenueEntity venue = new VenueEntity();
+        venue.setId(dto.getId());
+        venue.setName(dto.getName());
+        venue.setAddress(dto.getAddress());
+        venue.setCapacity(dto.getCapacity());
+        return venue;
     }
 }

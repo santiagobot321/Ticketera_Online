@@ -27,9 +27,8 @@ public class EventController {
     @Operation(summary = "Obtener todos los eventos", description = "Devuelve la lista completa de eventos almacenados en memoria.")
     @ApiResponse(responseCode = "200", description = "Lista recuperada correctamente")
     @GetMapping
-    public ResponseEntity<List<EventDTO>> getAllEvents() {
-        List<EventDTO> events = eventService.getAllEvents();
-        return ResponseEntity.ok(events);
+    public List<EventDTO> getAllEvents() {
+        return eventService.getAllEvents();
     }
 
     @Operation(summary = "Obtener un evento por ID",
@@ -39,15 +38,8 @@ public class EventController {
             @ApiResponse(responseCode = "404", description = "No existe un evento con ese ID")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<EventDTO> getEventById(
-            @Parameter(description = "ID del evento a recuperar")
-            @PathVariable Long id) {
-        try {
-            EventDTO event = eventService.getEventById(id);
-            return ResponseEntity.ok(event);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public EventDTO getEventById(@PathVariable Long id) {
+        return eventService.getEventById(id);
     }
 
     @Operation(summary = "Crear un nuevo evento",
@@ -57,15 +49,8 @@ public class EventController {
             @ApiResponse(responseCode = "400", description = "Error de validación")
     })
     @PostMapping
-    public ResponseEntity<EventDTO> createEvent(
-            @Parameter(description = "Datos del evento a crear")
-            @RequestBody EventDTO eventDTO) {
-        try {
-            EventDTO event = eventService.createEvent(eventDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(event);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public EventDTO createEvent(@RequestBody EventDTO eventDTO) {
+            return eventService.createEvent(eventDTO);
     }
 
     @Operation(summary = "Actualizar un evento existente",
@@ -75,17 +60,8 @@ public class EventController {
             @ApiResponse(responseCode = "404", description = "Evento no encontrado")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<EventDTO> updateEvent(
-            @Parameter(description = "ID del evento a actualizar")
-            @PathVariable Long id,
-            @Parameter(description = "Nuevos datos del evento")
-            @RequestBody EventDTO eventDTO) {
-        try {
-            EventDTO updated = eventService.updateEvent(id, eventDTO);
-            return ResponseEntity.ok(updated);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public EventDTO updateEvent(@PathVariable Long id, @RequestBody EventDTO eventDTO) {
+            return eventService.updateEvent(id, eventDTO);
     }
 
     @Operation(summary = "Eliminar un evento",
@@ -95,14 +71,7 @@ public class EventController {
             @ApiResponse(responseCode = "404", description = "Evento no encontrado")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEvent(
-            @Parameter(description = "ID del evento a eliminar")
-            @PathVariable Long id) {
-        try {
+    public void deleteEvent(@PathVariable Long id) {
             eventService.deleteEvent(id);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
     }
 }

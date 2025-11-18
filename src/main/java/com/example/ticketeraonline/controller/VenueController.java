@@ -8,6 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/venues")
+@Tag(name = "Venues", description = "CRUD for venue management")
 public class VenueController {
 
     private final VenueService venueService;

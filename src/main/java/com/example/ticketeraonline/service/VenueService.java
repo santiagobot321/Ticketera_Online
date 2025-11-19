@@ -30,14 +30,27 @@ public class VenueService {
     }
 
     public VenueDTO createVenue(VenueDTO dto) {
+
+        // Task 2: duplicate name validation
+        if (venueRepository.existsByName(dto.getName())) {
+            throw new IllegalArgumentException("A venue with this name already exists");
+        }
+
         VenueEntity venue = toEntity(dto);
         VenueEntity saved = venueRepository.save(venue);
         return toDTO(saved);
     }
 
     public VenueDTO updateVenue(Long id, VenueDTO dto) {
+
         VenueEntity venue = venueRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Venue not found with ID: " + id));
+
+        // Task 2: validate duplicates only if the name is changing
+        if (!venue.getName().equals(dto.getName())
+                && venueRepository.existsByName(dto.getName())) {
+            throw new IllegalArgumentException("Another venue already uses this name");
+        }
 
         venue.setName(dto.getName());
         venue.setAddress(dto.getAddress());
@@ -54,7 +67,6 @@ public class VenueService {
         venueRepository.deleteById(id);
     }
 
-    // Conversion helpers
     private VenueDTO toDTO(VenueEntity venue) {
         VenueDTO dto = new VenueDTO();
         dto.setId(venue.getId());

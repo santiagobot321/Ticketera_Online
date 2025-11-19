@@ -21,7 +21,6 @@ public class EventService {
         this.venueRepository = venueRepository;
     }
 
-    // Convert Entity → DTO
     private EventDTO toDTO(EventEntity entity) {
         EventDTO dto = new EventDTO();
         dto.setId(entity.getId());
@@ -31,7 +30,6 @@ public class EventService {
         return dto;
     }
 
-    // Convert DTO → Entity
     private EventEntity toEntity(EventDTO dto, VenueEntity venue) {
         EventEntity entity = new EventEntity();
         entity.setId(dto.getId());
@@ -55,26 +53,28 @@ public class EventService {
     }
 
     public EventDTO createEvent(EventDTO dto) {
-        if (dto.getName() == null || dto.getName().isBlank()) {
-            throw new IllegalArgumentException("Event name cannot be empty");
+
+        // Task 2: duplicate name validation
+        if (eventRepository.existsByName(dto.getName())) {
+            throw new IllegalArgumentException("An event with this name already exists");
         }
 
-        // make sure venue exists
         VenueEntity venue = venueRepository.findById(dto.getVenueId())
                 .orElseThrow(() -> new IllegalArgumentException("Venue not found with id: " + dto.getVenueId()));
 
-        EventEntity entity = toEntity(dto, venue);
-        EventEntity saved = eventRepository.save(entity);
-
+        EventEntity saved = eventRepository.save(toEntity(dto, venue));
         return toDTO(saved);
     }
 
     public EventDTO updateEvent(Long id, EventDTO dto) {
+
         EventEntity existing = eventRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found with id: " + id));
 
-        if (dto.getName() == null || dto.getName().isBlank()) {
-            throw new IllegalArgumentException("Event name cannot be empty");
+        // Task 2: duplicate name validation ONLY if name changed
+        if (!existing.getName().equals(dto.getName())
+                && eventRepository.existsByName(dto.getName())) {
+            throw new IllegalArgumentException("Another event already uses this name");
         }
 
         VenueEntity venue = venueRepository.findById(dto.getVenueId())

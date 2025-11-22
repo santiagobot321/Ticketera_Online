@@ -1,10 +1,7 @@
 package com.example.ticketeraonline.dto;
 
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Data;
-
 import java.time.LocalDateTime;
 
 @Data
@@ -12,13 +9,13 @@ public class EventDTO {
 
     private Long id;
 
-    @NotBlank(message = "Event name cannot be empty")
+    @NotBlank(message = "The event name cannot be blank")
+    @Size(min = 3, max = 100, message = "Event name must be between 3 and 100 characters")
     private String name;
 
-    @NotNull(message = "Event dateTime is required")
-    @Future(message = "Event dateTime must be in the future")
+    @Future(message = "The event date must be in the future")
     private LocalDateTime dateTime;
 
-    @NotNull(message = "Venue ID is required")
+    @NotNull(message = "The venueId is required")
     private Long venueId;
 }

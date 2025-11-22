@@ -1,12 +1,9 @@
 package com.example.ticketeraonline.controller;
 
 import com.example.ticketeraonline.dto.EventDTO;
+import com.example.ticketeraonline.entity.EventEntity;
 import com.example.ticketeraonline.service.EventService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,57 +12,34 @@ import java.util.List;
 @RequestMapping("/events")
 public class EventController {
 
-    private final EventService eventService;
+    private final EventService service;
 
-    public EventController(EventService eventService) {
-        this.eventService = eventService;
+    public EventController(EventService service) {
+        this.service = service;
     }
 
-    @Operation(summary = "Get all events")
     @GetMapping
-    public List<EventDTO> getAllEvents() {
-        return eventService.getAllEvents();
+    public List<EventEntity> findAll() {
+        return service.findAll();
     }
 
-    @Operation(summary = "Get event by ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Event found"),
-            @ApiResponse(responseCode = "404", description = "Event not found")
-    })
     @GetMapping("/{id}")
-    public EventDTO getEventById(@PathVariable Long id) {
-        return eventService.getEventById(id);
+    public EventEntity findById(@PathVariable Long id) {
+        return service.findById(id);
     }
 
-    @Operation(summary = "Create a new event")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Event created"),
-            @ApiResponse(responseCode = "400", description = "Validation error")
-    })
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public EventDTO createEvent(@Valid @RequestBody EventDTO eventDTO) {
-        return eventService.createEvent(eventDTO);
-    }
-
-    @Operation(summary = "Update an existing event")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Event updated"),
-            @ApiResponse(responseCode = "404", description = "Event not found")
-    })
-    @PutMapping("/{id}")
-    public EventDTO updateEvent(@PathVariable Long id, @Valid @RequestBody EventDTO eventDTO) {
-        return eventService.updateEvent(id, eventDTO);
-    }
-
-    @Operation(summary = "Delete an event")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Event deleted"),
-            @ApiResponse(responseCode = "404", description = "Event not found")
-    })
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteEvent(@PathVariable Long id) {
-        eventService.deleteEvent(id);
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
+    }
+
+    @PostMapping
+    public EventEntity create(@Valid @RequestBody EventDTO dto) {
+        return service.create(dto);
+    }
+
+    @PutMapping("/{id}")
+    public EventEntity update(@PathVariable Long id, @Valid @RequestBody EventDTO dto) {
+        return service.update(id, dto);
     }
 }

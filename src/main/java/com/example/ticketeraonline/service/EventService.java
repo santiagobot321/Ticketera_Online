@@ -8,7 +8,6 @@ import com.example.ticketeraonline.repository.VenueRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class EventService {
@@ -21,77 +20,71 @@ public class EventService {
         this.venueRepository = venueRepository;
     }
 
-    private EventDTO toDTO(EventEntity entity) {
-        EventDTO dto = new EventDTO();
-        dto.setId(entity.getId());
-        dto.setName(entity.getName());
-        dto.setDateTime(entity.getDateTime());
-        dto.setVenueId(entity.getVenue().getId());
-        return dto;
+    public EventEntity create(EventDTO dto) {
+        VenueEntity venue = venueRepository.findById(dto.getVenueId()).orElse(null);
+
+        EventEntity e = new EventEntity();
+        e.setName(dto.getName());
+        e.setDateTime(dto.getDateTime());
+        e.setVenue(venue);
+
+        return eventRepository.save(e);
     }
 
-    private EventEntity toEntity(EventDTO dto, VenueEntity venue) {
-        EventEntity entity = new EventEntity();
-        entity.setId(dto.getId());
-        entity.setName(dto.getName());
-        entity.setDateTime(dto.getDateTime());
-        entity.setVenue(venue);
-        return entity;
+    public List<EventEntity> findAll() {
+        return eventRepository.findAll();
     }
 
-    public List<EventDTO> getAllEvents() {
-        return eventRepository.findAll()
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+    public EventEntity findById(Long id) {
+        return eventRepository.findById(id).orElse(null);
     }
 
-    public EventDTO getEventById(Long id) {
-        EventEntity entity = eventRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found with id: " + id));
-        return toDTO(entity);
+    public EventEntity update(Long id, EventDTO dto) {
+        EventEntity e = eventRepository.findById(id).orElse(null);
+        if (e == null) return null;
+
+        e.setName(dto.getName());
+        e.setDateTime(dto.getDateTime());
+        e.setVenue(venueRepository.findById(dto.getVenueId()).orElse(null));
+
+        return eventRepository.save(e);
     }
 
-    public EventDTO createEvent(EventDTO dto) {
+    public void delete(Long id) {
+        eventRepository.deleteById(id);
+    }
 
-        // Task 2: duplicate name validation
+    public EventEntity create(EventDTO dto) {
+
         if (eventRepository.existsByName(dto.getName())) {
-            throw new IllegalArgumentException("An event with this name already exists");
+            throw new RuntimeException("Event name already exists");
         }
 
-        VenueEntity venue = venueRepository.findById(dto.getVenueId())
-                .orElseThrow(() -> new IllegalArgumentException("Venue not found with id: " + dto.getVenueId()));
+        VenueEntity venue = venueRepository.findById(dto.getVenueId()).orElse(null);
 
-        EventEntity saved = eventRepository.save(toEntity(dto, venue));
-        return toDTO(saved);
+        EventEntity e = new EventEntity();
+        e.setName(dto.getName());
+        e.setDateTime(dto.getDateTime());
+        e.setVenue(venue);
+
+        return eventRepository.save(e);
     }
 
-    public EventDTO updateEvent(Long id, EventDTO dto) {
+    public EventEntity update(Long id, EventDTO dto) {
 
-        EventEntity existing = eventRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found with id: " + id));
+        EventEntity existing = eventRepository.findById(id).orElse(null);
+        if (existing == null) return null;
 
-        // Task 2: duplicate name validation ONLY if name changed
-        if (!existing.getName().equals(dto.getName())
-                && eventRepository.existsByName(dto.getName())) {
-            throw new IllegalArgumentException("Another event already uses this name");
+        if (!existing.getName().equals(dto.getName()) &&
+                eventRepository.existsByName(dto.getName())) {
+            throw new RuntimeException("Event name already exists");
         }
-
-        VenueEntity venue = venueRepository.findById(dto.getVenueId())
-                .orElseThrow(() -> new IllegalArgumentException("Venue not found with id: " + dto.getVenueId()));
 
         existing.setName(dto.getName());
         existing.setDateTime(dto.getDateTime());
-        existing.setVenue(venue);
+        existing.setVenue(venueRepository.findById(dto.getVenueId()).orElse(null));
 
-        EventEntity saved = eventRepository.save(existing);
-        return toDTO(saved);
+        return eventRepository.save(existing);
     }
 
-    public void deleteEvent(Long id) {
-        if (!eventRepository.existsById(id)) {
-            throw new IllegalArgumentException("Event not found with id: " + id);
-        }
-        eventRepository.deleteById(id);
-    }
 }

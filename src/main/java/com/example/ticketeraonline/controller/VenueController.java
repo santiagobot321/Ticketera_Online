@@ -1,44 +1,36 @@
 package com.example.ticketeraonline.controller;
 
 import com.example.ticketeraonline.dto.VenueDTO;
+import com.example.ticketeraonline.entity.VenueEntity;
 import com.example.ticketeraonline.service.VenueService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/venues")
-@Tag(name = "Venues", description = "CRUD for venue management")
 public class VenueController {
 
-    private final VenueService venueService;
+    private final VenueService service;
 
-    public VenueController(VenueService venueService) {
-        this.venueService = venueService;
-    }
-
-    @GetMapping
-    public List<VenueDTO> getAllVenues() {
-        return venueService.getAllVenues();
-    }
-
-    @GetMapping("/{id}")
-    public VenueDTO getVenueById(@PathVariable Long id) {
-        return venueService.getById(id);
+    public VenueController(VenueService service) {
+        this.service = service;
     }
 
     @PostMapping
-    public VenueDTO createVenue(@RequestBody VenueDTO venueDTO) {
-        return venueService.createVenue(venueDTO);
+    public VenueEntity create(@Valid @RequestBody VenueDTO dto) {
+        return service.create(dto);
     }
 
-    @PutMapping("/{id}")
-    public VenueDTO updateVenue(@PathVariable Long id, @RequestBody VenueDTO venueDTO) {
-        return venueService.updateVenue(id, venueDTO);
+
+    @GetMapping
+    public List<VenueEntity> findAll() {
+        return service.findAll();
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteVenue(@PathVariable Long id) {
-        venueService.deleteVenue(id);
+    @GetMapping("/{id}")
+    public VenueEntity findById(@PathVariable Long id) {
+        return service.findById(id);
     }
 }

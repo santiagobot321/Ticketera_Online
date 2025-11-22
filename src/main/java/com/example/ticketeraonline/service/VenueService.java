@@ -19,6 +19,7 @@ public class VenueService {
     public VenueEntity create(VenueDTO dto) {
         VenueEntity v = new VenueEntity();
         v.setName(dto.getName());
+        v.setCity(dto.getCity());
         v.setAddress(dto.getAddress());
         v.setCapacity(dto.getCapacity());
         return venueRepository.save(v);

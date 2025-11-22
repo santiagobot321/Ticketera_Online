@@ -1,9 +1,8 @@
 package com.example.ticketeraonline.dto;
 
-import jakarta.validation.constraints.*;
-import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-@Data
 public class VenueDTO {
 
     private Long id;
@@ -11,9 +10,32 @@ public class VenueDTO {
     @NotBlank(message = "Venue name cannot be blank")
     private String name;
 
-    @NotBlank(message = "Venue address cannot be blank")
+    @NotBlank(message = "City cannot be blank")
+    private String city;
+
+    @NotBlank(message = "Address cannot be blank")
     private String address;
 
-    @Min(value = 1, message = "Capacity must be at least 1")
-    private int capacity;
+    @NotNull(message = "Capacity is required")
+    private Integer capacity;
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public Integer getCapacity() {
+        return capacity;
+    }
 }

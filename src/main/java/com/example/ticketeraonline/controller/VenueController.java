@@ -23,7 +23,6 @@ public class VenueController {
         return service.create(dto);
     }
 
-
     @GetMapping
     public List<VenueEntity> findAll() {
         return service.findAll();

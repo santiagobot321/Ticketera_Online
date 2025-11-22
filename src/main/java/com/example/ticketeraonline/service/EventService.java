@@ -5,9 +5,11 @@ import com.example.ticketeraonline.entity.EventEntity;
 import com.example.ticketeraonline.entity.VenueEntity;
 import com.example.ticketeraonline.repository.EventRepository;
 import com.example.ticketeraonline.repository.VenueRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Service
 public class EventService {
@@ -21,70 +23,51 @@ public class EventService {
     }
 
     public EventEntity create(EventDTO dto) {
-        VenueEntity venue = venueRepository.findById(dto.getVenueId()).orElse(null);
+        if (eventRepository.existsByName(dto.getName())) {
+            throw new RuntimeException("Event name already exists");
+        }
 
-        EventEntity e = new EventEntity();
-        e.setName(dto.getName());
-        e.setDateTime(dto.getDateTime());
-        e.setVenue(venue);
+        VenueEntity venue = venueRepository.findById(dto.getVenueId())
+                .orElseThrow(() -> new RuntimeException("Venue not found"));
 
-        return eventRepository.save(e);
+        EventEntity event = new EventEntity();
+        event.setName(dto.getName());
+        event.setDateTime(dto.getDateTime());
+        event.setVenue(venue);
+        event.setCategory(dto.getCategory());
+
+        return eventRepository.save(event);
     }
 
-    public List<EventEntity> findAll() {
-        return eventRepository.findAll();
+    public Page<EventEntity> getEvents(String city, String category, String startDate, Pageable pageable) {
+        LocalDateTime date = (startDate != null ? LocalDateTime.parse(startDate) : null);
+        return eventRepository.filter(city, category, date, pageable);
     }
 
     public EventEntity findById(Long id) {
-        return eventRepository.findById(id).orElse(null);
+        return eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
     }
 
     public EventEntity update(Long id, EventDTO dto) {
-        EventEntity e = eventRepository.findById(id).orElse(null);
-        if (e == null) return null;
+        EventEntity event = findById(id);
 
-        e.setName(dto.getName());
-        e.setDateTime(dto.getDateTime());
-        e.setVenue(venueRepository.findById(dto.getVenueId()).orElse(null));
+        if (!event.getName().equals(dto.getName()) && eventRepository.existsByName(dto.getName())) {
+            throw new RuntimeException("Event name already exists");
+        }
 
-        return eventRepository.save(e);
+        VenueEntity venue = venueRepository.findById(dto.getVenueId())
+                .orElseThrow(() -> new RuntimeException("Venue not found"));
+
+        event.setName(dto.getName());
+        event.setCategory(dto.getCategory());
+        event.setDateTime(dto.getDateTime());
+        event.setVenue(venue);
+
+        return eventRepository.save(event);
     }
 
     public void delete(Long id) {
         eventRepository.deleteById(id);
     }
-
-    public EventEntity create(EventDTO dto) {
-
-        if (eventRepository.existsByName(dto.getName())) {
-            throw new RuntimeException("Event name already exists");
-        }
-
-        VenueEntity venue = venueRepository.findById(dto.getVenueId()).orElse(null);
-
-        EventEntity e = new EventEntity();
-        e.setName(dto.getName());
-        e.setDateTime(dto.getDateTime());
-        e.setVenue(venue);
-
-        return eventRepository.save(e);
-    }
-
-    public EventEntity update(Long id, EventDTO dto) {
-
-        EventEntity existing = eventRepository.findById(id).orElse(null);
-        if (existing == null) return null;
-
-        if (!existing.getName().equals(dto.getName()) &&
-                eventRepository.existsByName(dto.getName())) {
-            throw new RuntimeException("Event name already exists");
-        }
-
-        existing.setName(dto.getName());
-        existing.setDateTime(dto.getDateTime());
-        existing.setVenue(venueRepository.findById(dto.getVenueId()).orElse(null));
-
-        return eventRepository.save(existing);
-    }
-
 }

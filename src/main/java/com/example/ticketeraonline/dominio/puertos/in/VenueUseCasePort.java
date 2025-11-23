@@ -10,4 +10,9 @@ public interface VenueUseCasePort {
     Venue createVenue(Venue venue);
     Venue updateVenue(Long id, Venue venue);
     void deleteVenue(Long id);
+
+    // New query methods
+    List<Venue> getVenuesByCapacityGreaterThanEqual(int capacity);
+    List<Venue> getVenuesByNameContaining(String name);
+    List<Venue> getVenuesByAddressContaining(String address);
 }

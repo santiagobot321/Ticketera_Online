@@ -5,6 +5,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.FetchType;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -19,5 +22,8 @@ public class EventEntity {
     private Long id;
     private String name;
     private LocalDateTime dateTime;
-    private Long venueId; // For simplicity, keeping this as a Long. In a real app, it would be a @ManyToOne relationship.
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "venue_id") // This will be the foreign key column in the events table
+    private VenueEntity venue;
 }

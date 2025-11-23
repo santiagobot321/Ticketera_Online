@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationConfig {
 
     @Bean
-    public EventUseCasePort eventUseCase(EventRepositoryPort eventRepositoryPort) {
-        return new EventUseCase(eventRepositoryPort);
+    public EventUseCasePort eventUseCase(EventRepositoryPort eventRepositoryPort, VenueRepositoryPort venueRepositoryPort) {
+        return new EventUseCase(eventRepositoryPort, venueRepositoryPort);
     }
 
     @Bean

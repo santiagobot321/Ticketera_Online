@@ -8,5 +8,5 @@ public class Event {
     private Long id;
     private String name;
     private LocalDateTime dateTime;
-    private Long venueId;
+    private Venue venue; // Changed from venueId to Venue object
 }

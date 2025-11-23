@@ -7,12 +7,12 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {EventMapper.class})
+@Mapper(componentModel = "spring") // Removed 'uses = {EventMapper.class}'
 public interface VenueMapper {
-    @Mapping(source = "events", target = "events")
+    // Removed '@Mapping(source = "events", target = "events")'
     Venue toDomain(VenueEntity entity);
 
-    @Mapping(source = "events", target = "events")
+    // Removed '@Mapping(source = "events", target = "events")'
     VenueEntity toEntity(Venue domain);
 
     List<Venue> toDomainList(List<VenueEntity> entityList);

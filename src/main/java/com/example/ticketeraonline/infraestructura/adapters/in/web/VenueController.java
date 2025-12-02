@@ -2,83 +2,82 @@ package com.example.ticketeraonline.infraestructura.adapters.in.web;
 
 import com.example.ticketeraonline.dominio.Venue;
 import com.example.ticketeraonline.dominio.puertos.in.VenueUseCasePort;
+import com.example.ticketeraonline.infraestructura.adapters.in.web.dto.VenueRequest;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/venues")
+@RequiredArgsConstructor
 public class VenueController {
 
     private final VenueUseCasePort venueUseCasePort;
 
-    public VenueController(VenueUseCasePort venueUseCasePort) {
-        this.venueUseCasePort = venueUseCasePort;
-    }
-
-    // GET ALL
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Venue>> getAllVenues() {
-        List<Venue> venues = venueUseCasePort.getAllVenues();
-        return ResponseEntity.ok(venues);
+        return ResponseEntity.ok(venueUseCasePort.getAllVenues());
     }
 
-    // GET BY ID
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Venue> getVenueById(@PathVariable Long id) {
-        try {
-            Venue venue = venueUseCasePort.getById(id);
-            return ResponseEntity.ok(venue);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(venueUseCasePort.getById(id));
     }
 
-    // POST
     @PostMapping
-    public ResponseEntity<Venue> createVenue(@RequestBody Venue venue) {
-        // Validation required in Task 2
-        if (venue.getName() == null || venue.getName().trim().isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Venue> createVenue(@Valid @RequestBody VenueRequest venueRequest) {
+        Venue venue = new Venue();
+        venue.setName(venueRequest.getName());
+        venue.setAddress(venueRequest.getAddress());
+        venue.setCapacity(venueRequest.getCapacity());
 
-        try {
-            Venue createdVenue = venueUseCasePort.createVenue(venue);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdVenue);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        Venue createdVenue = venueUseCasePort.createVenue(venue);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdVenue);
     }
 
-    // PUT
     @PutMapping("/{id}")
-    public ResponseEntity<Venue> updateVenue(
-            @PathVariable Long id,
-            @RequestBody Venue venue
-    ) {
-        // Validation required in Task 2
-        if (venue.getName() == null || venue.getName().trim().isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Venue> updateVenue(@PathVariable Long id, @Valid @RequestBody VenueRequest venueRequest) {
+        Venue venue = new Venue();
+        venue.setName(venueRequest.getName());
+        venue.setAddress(venueRequest.getAddress());
+        venue.setCapacity(venueRequest.getCapacity());
 
-        try {
-            Venue updatedVenue = venueUseCasePort.updateVenue(id, venue);
-            return ResponseEntity.ok(updatedVenue);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Venue updatedVenue = venueUseCasePort.updateVenue(id, venue);
+        return ResponseEntity.ok(updatedVenue);
     }
 
-    // DELETE
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteVenue(@PathVariable Long id) {
-        try {
-            venueUseCasePort.deleteVenue(id);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+        venueUseCasePort.deleteVenue(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // New query endpoints
+    @GetMapping("/by-capacity")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Venue>> getVenuesByCapacity(@RequestParam int capacity) {
+        return ResponseEntity.ok(venueUseCasePort.getVenuesByCapacityGreaterThanEqual(capacity));
+    }
+
+    @GetMapping("/by-name")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Venue>> getVenuesByName(@RequestParam String name) {
+        return ResponseEntity.ok(venueUseCasePort.getVenuesByNameContaining(name));
+    }
+
+    @GetMapping("/by-address")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Venue>> getVenuesByAddress(@RequestParam String address) {
+        return ResponseEntity.ok(venueUseCasePort.getVenuesByAddressContaining(address));
     }
 }

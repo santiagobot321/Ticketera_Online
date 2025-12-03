@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"app_name":"ticketeraonline"}</customFields>
+            <!-- By default, LogstashEncoder includes common fields and MDC. -->
+            <!-- We can explicitly configure which MDC keys to pull to the root level if needed, -->
+            <!-- but for now, let's rely on default MDC inclusion under the 'mdc' field. -->
+            <!-- If you need specific MDC keys at the root, you would use <includeMdcKeyName> -->
+            <!-- but ensure it's directly under <encoder> and not nested incorrectly. -->
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="JSON_CONSOLE"/>
+    </root>
+
+    <logger name="com.example.ticketeraonline" level="DEBUG"/>
+
+</configuration>

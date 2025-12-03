@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public class Event {
     private Long id;
     private String name;
-    private LocalDateTime dateTime;
-    private Venue venue; // Changed from venueId to Venue object
+    private LocalDateTime startDateTime; // Changed from dateTime
+    private LocalDateTime endDateTime;   // New field
+    private Venue venue;
 }

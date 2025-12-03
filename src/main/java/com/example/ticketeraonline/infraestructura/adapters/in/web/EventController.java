@@ -38,7 +38,8 @@ public class EventController {
     public ResponseEntity<Event> createEvent(@Valid @RequestBody EventRequest eventRequest) {
         Event event = new Event();
         event.setName(eventRequest.getName());
-        event.setDateTime(eventRequest.getDateTime());
+        event.setStartDateTime(eventRequest.getStartDateTime()); // Changed from dateTime
+        event.setEndDateTime(eventRequest.getEndDateTime());     // New field
         Venue venue = new Venue();
         venue.setId(eventRequest.getVenueId());
         event.setVenue(venue);
@@ -52,7 +53,8 @@ public class EventController {
     public ResponseEntity<Event> updateEvent(@PathVariable Long id, @Valid @RequestBody EventRequest eventRequest) {
         Event event = new Event();
         event.setName(eventRequest.getName());
-        event.setDateTime(eventRequest.getDateTime());
+        event.setStartDateTime(eventRequest.getStartDateTime()); // Changed from dateTime
+        event.setEndDateTime(eventRequest.getEndDateTime());     // New field
         Venue venue = new Venue();
         venue.setId(eventRequest.getVenueId());
         event.setVenue(venue);

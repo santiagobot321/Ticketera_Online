@@ -7,26 +7,26 @@ import com.example.ticketeraonline.dominio.puertos.out.EventRepositoryPort;
 import com.example.ticketeraonline.dominio.puertos.out.VenueRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // Import Transactional
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional // Apply transactional to the whole class
+@Transactional
 public class EventUseCase implements EventUseCasePort {
     private final EventRepositoryPort eventRepositoryPort;
     private final VenueRepositoryPort venueRepositoryPort;
 
     @Override
-    @Transactional(readOnly = true) // Mark as read-only transaction
+    @Transactional(readOnly = true)
     public List<Event> getAllEvents() {
         return eventRepositoryPort.findAll();
     }
 
     @Override
-    @Transactional(readOnly = true) // Mark as read-only transaction
+    @Transactional(readOnly = true)
     public Event getEventById(Long id) {
         Event event = eventRepositoryPort.findById(id);
         if (event == null) {
@@ -83,7 +83,7 @@ public class EventUseCase implements EventUseCasePort {
 
     // New query methods implementation
     @Override
-    @Transactional(readOnly = true) // Mark as read-only transaction
+    @Transactional(readOnly = true)
     public List<Event> getEventsByVenueId(Long venueId) {
         Venue venue = venueRepositoryPort.findById(venueId);
         if (venue == null) {
@@ -93,18 +93,18 @@ public class EventUseCase implements EventUseCasePort {
     }
 
     @Override
-    @Transactional(readOnly = true) // Mark as read-only transaction
+    @Transactional(readOnly = true)
     public List<Event> getEventsByDateTimeBetween(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        return eventRepositoryPort.findByDateTimeBetween(startDateTime, endDateTime);
+        return eventRepositoryPort.findByStartDateTimeBetween(startDateTime, endDateTime);
     }
 
     @Override
-    @Transactional(readOnly = true) // Mark as read-only transaction
+    @Transactional(readOnly = true)
     public List<Event> getEventsByVenueIdAndDateTimeBetween(Long venueId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         Venue venue = venueRepositoryPort.findById(venueId);
         if (venue == null) {
             throw new IllegalArgumentException("Venue not found with id: " + venueId);
         }
-        return eventRepositoryPort.findByVenueAndDateTimeBetween(venue, startDateTime, endDateTime);
+        return eventRepositoryPort.findByVenueAndStartDateTimeBetween(venue, startDateTime, endDateTime);
     }
 }

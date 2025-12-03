@@ -15,6 +15,6 @@ public interface EventRepositoryPort {
 
     // New query methods
     List<Event> findByVenue(Venue venue);
-    List<Event> findByDateTimeBetween(LocalDateTime startDateTime, LocalDateTime endDateTime);
-    List<Event> findByVenueAndDateTimeBetween(Venue venue, LocalDateTime startDateTime, LocalDateTime endDateTime);
+    List<Event> findByStartDateTimeBetween(LocalDateTime startDateTime, LocalDateTime endDateTime); // Changed method name
+    List<Event> findByVenueAndStartDateTimeBetween(Venue venue, LocalDateTime startDateTime, LocalDateTime endDateTime); // Changed method name
 }

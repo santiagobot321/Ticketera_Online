@@ -21,7 +21,8 @@ public class EventEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private LocalDateTime dateTime;
+    private LocalDateTime startDateTime; // Changed from dateTime
+    private LocalDateTime endDateTime;   // New field
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "venue_id") // This will be the foreign key column in the events table

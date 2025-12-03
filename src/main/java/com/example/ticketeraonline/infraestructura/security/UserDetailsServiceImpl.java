@@ -1,7 +1,7 @@
 package com.example.ticketeraonline.infraestructura.security;
 
 import com.example.ticketeraonline.infraestructura.adapters.out.jpa.entity.UserEntity;
-import com.example.ticketeraonline.infraestructura.adapters.out.jpa.repository.UserRepository;
+import com.example.ticketeraonline.infraestructura.adapters.out.jpa.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final UserJpaRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

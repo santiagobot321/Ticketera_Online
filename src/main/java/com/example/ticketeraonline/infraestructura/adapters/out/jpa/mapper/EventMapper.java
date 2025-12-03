@@ -10,9 +10,13 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {VenueMapper.class})
 public interface EventMapper {
     @Mapping(source = "venue", target = "venue")
+    @Mapping(source = "startDateTime", target = "startDateTime") // Explicitly map startDateTime
+    @Mapping(source = "endDateTime", target = "endDateTime")     // Explicitly map endDateTime
     Event toDomain(EventEntity entity);
 
     @Mapping(source = "venue", target = "venue")
+    @Mapping(source = "startDateTime", target = "startDateTime") // Explicitly map startDateTime
+    @Mapping(source = "endDateTime", target = "endDateTime")     // Explicitly map endDateTime
     EventEntity toEntity(Event domain);
 
     List<Event> toDomainList(List<EventEntity> entityList);

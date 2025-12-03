@@ -16,10 +16,10 @@ public interface EventJpaRepository extends JpaRepository<EventEntity, Long> {
     List<EventEntity> findByVenue(VenueEntity venue);
 
     @EntityGraph(attributePaths = "venue")
-    List<EventEntity> findByDateTimeBetween(LocalDateTime startDateTime, LocalDateTime endDateTime);
+    List<EventEntity> findByStartDateTimeBetween(LocalDateTime startDateTime, LocalDateTime endDateTime); // Changed method name
 
     @EntityGraph(attributePaths = "venue")
-    List<EventEntity> findByVenueAndDateTimeBetween(VenueEntity venue, LocalDateTime startDateTime, LocalDateTime endDateTime);
+    List<EventEntity> findByVenueAndStartDateTimeBetween(VenueEntity venue, LocalDateTime startDateTime, LocalDateTime endDateTime); // Changed method name
 
     // For dynamic filtering, we might later use JpaSpecificationExecutor or custom queries.
     // For now, these cover basic filtering needs.
